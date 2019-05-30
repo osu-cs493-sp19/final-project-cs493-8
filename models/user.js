@@ -5,8 +5,6 @@ const bcrypt = require('bcryptjs');
 
 const mysqlPool = require('../lib/mysqlPool');
 const { extractValidFields } = require('../lib/validation');
-const { getReviewsByBusinessId } = require('./review');
-const { getPhotosByBusinessId } = require('./photo');
 
 
 /*
