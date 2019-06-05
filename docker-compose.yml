@@ -4,6 +4,10 @@ services:
     build: .
     image: tarpaulin-api
     restart: always
+    volumes:
+      - type: bind
+        source: .
+        target: /usr/src/app
     ports:
       - 8000:8000
     environment:
@@ -19,6 +23,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./db-init/:/docker-entrypoint-initdb.d
+
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
       MYSQL_DATABASE: ${MYSQL_DATABASE}
