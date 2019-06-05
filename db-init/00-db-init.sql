@@ -11,7 +11,7 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` varchar(255) NOT NULL,
+  `role` ENUM('admin','instructor','student') NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
@@ -117,7 +117,7 @@ CREATE TABLE `assignments` (
   `description` varchar(1000) NOT NULL,
   `courseId` mediumint(9) NOT NULL,
   `points` mediumint(9) NOT NULL,
-  `due` varchar(255) NOT NULL,
+  `due` TIMESTAMP NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `assignments_ibfk_1` FOREIGN KEY (`courseId`) REFERENCES `courses` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
@@ -143,7 +143,7 @@ CREATE TABLE `submissions` (
   `description` varchar(1000) NOT NULL,
   `assignmentId` mediumint(9) NOT NULL,
   `studentId` mediumint(9) NOT NULL,
-  `timestamp` varchar(255) NOT NULL,
+  `timestamp` TIMESTAMP NOT NULL,
   `file` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `submissions_ibfk_1` FOREIGN KEY (`assignmentId`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
