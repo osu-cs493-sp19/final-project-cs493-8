@@ -117,13 +117,12 @@ CREATE TABLE `assignments` (
   `description` varchar(1000) NOT NULL,
   `courseId` mediumint(9) NOT NULL,
   `points` mediumint(9) NOT NULL,
-  `due` TIMESTAMP NOT NULL,
+  `due` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `assignments_ibfk_1` FOREIGN KEY (`courseId`) REFERENCES `courses` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 LOCK TABLES `assignments` WRITE;
-
 INSERT INTO `assignments` VALUES
   (1, "Final project CS101", "Write paper.on computer hardware interaction with software.", 1, 100, "2019-06-14 00:07:00"),
   (2, "Final project CS160", "Create Python graphic circle.", 2, 100, "2019-06-14 00:07:00"),
@@ -143,9 +142,17 @@ CREATE TABLE `submissions` (
   `description` varchar(1000) NOT NULL,
   `assignmentId` mediumint(9) NOT NULL,
   `studentId` mediumint(9) NOT NULL,
-  `timestamp` TIMESTAMP NOT NULL,
-  `file` varchar(255) NOT NULL,
+  `timestamp` varchar(255) NOT NULL,
+  `file` BLOB(3000),
   PRIMARY KEY (`id`),
   CONSTRAINT `submissions_ibfk_1` FOREIGN KEY (`assignmentId`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
   CONSTRAINT `submissions_ibfk_2` FOREIGN KEY (`studentId`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+LOCK TABLES `submissions` WRITE;
+INSERT INTO `submissions` VALUES
+  (1, "desc1", 1,6,"2019-06-14T17:00:00-07:00",NULL),
+  (2, "desc2", 1,6,"2019-06-14T17:00:00-07:00",NULL);
+
+UNLOCK TABLES;
