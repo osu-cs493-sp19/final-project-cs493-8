@@ -7,8 +7,11 @@ const {
   replaceAssignmentById,
   deleteAssignmentById,
   getSubmissionsById,
-  getAssignmentsPage
+  getAssignmentsPage,
+  validcourseinstructor,
+  validcourseinstructorById
 } = require('../models/assignments');
+
 
 const { generateAuthToken, requireAuthentication, requireAdmin } = require('../lib/auth');
 const { validateAgainstSchema} = require('../lib/validation.js')
@@ -25,11 +28,18 @@ const multer = require('multer');
 const mysqlPool = require('../lib/mysqlPool');
 
 router.post('/'
-//,requireAuthentication
+,requireAuthentication
 , async (req, res) => {
   //const status = await getAdminStatus(req.user);
   //console.log(status.admin);
-  //if (req.body.userid == req.user || status.admin) {
+
+  //Given userID and Course ID
+  console.log(req.user);
+  console.log(req.body.courseId);
+  response = await validcourseinstructor(req.user,req.body.courseId);
+  console.log(response);
+
+  if ((req.role=='instructor' && response.length > 0) || req.role=='admin') {
     if (validateAgainstSchema(req.body, AssignmentSchema)) {
       try {
         const id = await insertNewAssignment(req.body);
@@ -47,11 +57,12 @@ router.post('/'
         error: "Request body is not a valid assignemnt object."
       });
     }
-/*else{
-  res.status(403).send({
-      error: "Unauthorized to access the specified resource"
-    });*/
-//}
+  }
+    else{
+      res.status(403).send({
+          error: "Unauthorized to access the specified resource"
+        });
+    }
 });
 
 
@@ -72,11 +83,13 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.patch('/:id'
-  //,requireAuthentication
+  ,requireAuthentication
   , async (req, res) => {
+
+    response = await validcourseinstructor(req.user,req.body.courseId);
     //const status = await getAdminStatus(req.user);
     //console.log(status.admin);
-    //if (req.body.userid == req.user || status.admin) {
+    if ((req.role=='instructor' && response.length > 0) || req.role=='admin') {
       if (validateAgainstSchema(req.body, AssignmentSchema)) {
         try {
           const id = await replaceAssignmentById(req.params.id,req.body);
@@ -94,22 +107,25 @@ router.patch('/:id'
           error: "Request body is not a valid assignemnt object."
         });
       }
-  /*else{
+  }
+  else{
     res.status(403).send({
         error: "Unauthorized to access the specified resource"
-      });*/
-  //}
+      });
+  }
 
 });
 
 
 router.delete('/:id'
-  //,requireAuthentication
+  ,requireAuthentication
   , async (req, res) => {
     //const status = await getAdminStatus(req.user);
     //console.log(status.admin);
-    //if (req.body.userid == req.user || status.admin) {
-      if (validateAgainstSchema(req.body, AssignmentSchema)) {
+    response = await validcourseinstructorById(req.user,req.params.id);
+    console.log(response);
+  if ((req.role=='instructor' && response.length > 0) || req.role=='admin') {
+
         try {
           const id = await deleteAssignmentById(req.params.id);
           res.status(201).send({
@@ -121,31 +137,27 @@ router.delete('/:id'
             error: "Error inserting assignment into DB.  Please try again later."
           });
         }
-      } else {
-        res.status(400).send({
-          error: "Request body is not a valid assignemnt object."
-        });
-      }
-  /*else{
+
+    }
+  else{
     res.status(403).send({
         error: "Unauthorized to access the specified resource"
-      });*/
-  //}
+      });
+  }
 
 });
 
 router.get('/:id/submissions'
-    //,requireAuthentication
+    ,requireAuthentication
     ,async (req, res, next) => {
-      //const status = await getAdminStatus(req.user);
-      //console.log(status.admin);
-      //if (req.body.userid == req.user || status.admin) {
+      response = await validcourseinstructorById(req.user,req.params.id);
+  if ((req.role=='instructor' && response.length > 0) || req.role=='admin') {
 
           try {
             //const submissions = await getSubmissionsById(req.params.id);
 
 
-            const assignmentPage = await getAssignmentsPage(req.params.id, parseInt(req.query.page) || 1);
+            const assignmentPage = await getAssignmentsPage(req.params.id, parseInt(req.query.page) || 1, req.body.studentId);
             assignmentPage.links = {};
             if (assignmentPage.page < assignmentPage.totalPages) {
               assignmentPage.links.nextPage = `/assignments?page=${assignmentPage.page + 1}`;
@@ -163,14 +175,12 @@ router.get('/:id/submissions'
               error: "Error inserting assignment into DB.  Please try again later."
             });
           }
-
-    /*else{
+        }
+    else{
       res.status(403).send({
           error: "Unauthorized to access the specified resource"
-        });*/
-    //}
-
-
+        });
+    }
 
 });
 

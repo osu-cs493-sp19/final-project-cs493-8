@@ -148,7 +148,7 @@ function getAssignmentsCount() {
  * Executes a MySQL query to return a single page of assignments.  Returns a
  * Promise that resolves to an array containing the fetched page of assignments.
  */
-function getAssignmentsPage(page, id) {
+function getAssignmentsPage(page, id, studentId) {
   return new Promise(async (resolve, reject) => {
     /*
      * Compute last page number and make sure page is within allowed bounds.
@@ -162,8 +162,8 @@ function getAssignmentsPage(page, id) {
      const offset = (page - 1) * pageSize;
 
     mysqlPool.query(
-      'SELECT assignmentId, studentId, timestamp, file FROM submissions join assignments on submissions.assignmentId = assignments.id WHERE assignments.id = ? ORDER BY submissions.studentId LIMIT ?,?',
-      [ id, offset, pageSize ],
+      'SELECT assignmentId, studentId, timestamp, file FROM submissions join assignments on submissions.assignmentId = assignments.id WHERE assignments.id = ?, submissions.studentId = ? LIMIT ?,?',
+      [ id, studentId,offset, pageSize ],
       (err, results) => {
         if (err) {
           reject(err);
@@ -181,3 +181,44 @@ function getAssignmentsPage(page, id) {
   });
 }
 exports.getAssignmentsPage = getAssignmentsPage;
+
+
+function validcourseinstructor(userId, courseId){
+  return new Promise((resolve, reject) => {
+    mysqlPool.query(
+      'SELECT * FROM courses join users on courses.instructorId = users.id WHERE users.id = ? AND courses.id = ?',
+      [  userId, courseId ],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      }
+    );
+  });
+}
+
+
+
+exports.validcourseinstructor = validcourseinstructor;
+
+
+
+function validcourseinstructorById(userId, assId){
+  return new Promise((resolve, reject) => {
+    mysqlPool.query(
+      'SELECT * FROM courses join users on courses.instructorId = users.id join assignments on assignments.courseId = courses.id WHERE users.id = ? AND assignments.id = ?',
+      [  userId, assId ],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      }
+    );
+  });
+}
+
+exports.validcourseinstructorById = validcourseinstructorById;
