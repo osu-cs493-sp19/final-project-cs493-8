@@ -153,6 +153,7 @@ CREATE TABLE `submissions` (
 LOCK TABLES `submissions` WRITE;
 INSERT INTO `submissions` VALUES
   (1, "desc1", 1,6,"2019-06-14T17:00:00-07:00",NULL),
-  (2, "desc2", 1,6,"2019-06-14T17:00:00-07:00",NULL);
+  (2, "desc2", 1,6,"2019-06-14T17:00:00-07:00",NULL),
+  (3, "desc3", 1,6,"2019-06-14T17:00:00-07:00",NULL);
 
 UNLOCK TABLES;

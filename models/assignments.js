@@ -160,10 +160,10 @@ function getAssignmentsPage(page, id, studentId) {
      page = page > lastPage ? lastPage : page;
      page = page < 1 ? 1 : page;
      const offset = (page - 1) * pageSize;
-
+//'SELECT assignmentId, studentId, timestamp, file FROM submissions JOIN assignments ON submissions.assignmentId = assignments.id WHERE assignments.id = ? AND submissions.studentId = ? LIMIT ?,?',
     mysqlPool.query(
-      'SELECT assignmentId, studentId, timestamp, file FROM submissions join assignments on submissions.assignmentId = assignments.id WHERE assignments.id = ?, submissions.studentId = ? LIMIT ?,?',
-      [ id, studentId,offset, pageSize ],
+      'SELECT assignmentId, studentId, timestamp, file FROM submissions WHERE assignmentId = ? AND studentId = ? LIMIT ?,?',
+      [ id, studentId, offset, pageSize ],
       (err, results) => {
         if (err) {
           reject(err);
@@ -208,7 +208,7 @@ exports.validcourseinstructor = validcourseinstructor;
 function validcourseinstructorById(userId, assId){
   return new Promise((resolve, reject) => {
     mysqlPool.query(
-      'SELECT * FROM courses join users on courses.instructorId = users.id join assignments on assignments.courseId = courses.id WHERE users.id = ? AND assignments.id = ?',
+      'SELECT * FROM users JOIN courses ON users.id = courses.instructorId JOIN assignments ON courses.id = assignments.courseId  WHERE users.id = ? AND assignments.id = ?',
       [  userId, assId ],
       (err, results) => {
         if (err) {
@@ -222,3 +222,22 @@ function validcourseinstructorById(userId, assId){
 }
 
 exports.validcourseinstructorById = validcourseinstructorById;
+
+
+
+function getStudentAllowedSubmit() {
+  return new Promise((resolve, reject) => {
+    mysqlPool.query(
+      'SELECT COUNT(*) AS count FROM assignments',
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results[0].count);
+        }
+      }
+    );
+  });
+}
+
+exports.getStudentAllowedSubmit = getStudentAllowedSubmit;

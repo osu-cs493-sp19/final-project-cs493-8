@@ -9,7 +9,8 @@ const {
   getSubmissionsById,
   getAssignmentsPage,
   validcourseinstructor,
-  validcourseinstructorById
+  validcourseinstructorById,
+  getStudentAllowedSubmit
 } = require('../models/assignments');
 
 
@@ -150,29 +151,37 @@ router.delete('/:id'
 router.get('/:id/submissions'
     ,requireAuthentication
     ,async (req, res, next) => {
-      response = await validcourseinstructorById(req.user,req.params.id);
-  if ((req.role=='instructor' && response.length > 0) || req.role=='admin') {
 
+  response = await validcourseinstructorById(req.user,req.params.id);
+  console.log(response);
+  if ((req.role=='instructor' && response.length > 0) || req.role=='admin') {
+      console.log(req.body.studentId);
+      if(req.body.studentId!=undefined){
           try {
             //const submissions = await getSubmissionsById(req.params.id);
 
 
-            const assignmentPage = await getAssignmentsPage(req.params.id, parseInt(req.query.page) || 1, req.body.studentId);
-            assignmentPage.links = {};
-            if (assignmentPage.page < assignmentPage.totalPages) {
-              assignmentPage.links.nextPage = `/assignments?page=${assignmentPage.page + 1}`;
-              assignmentPage.links.lastPage = `/assignments?page=${assignmentPage.totalPages}`;
-            }
-            if (assignmentPage.page > 1) {
-              assignmentPage.links.prevPage = `/assignments?page=${assignmentPage.page - 1}`;
-              assignmentPage.links.firstPage = '/assignments?page=1';
-            }
-            res.status(200).send(assignmentPage);
+              const assignmentPage = await getAssignmentsPage(req.params.id, parseInt(req.query.page) || 1, req.body.studentId);
+              assignmentPage.links = {};
+              if (assignmentPage.page < assignmentPage.totalPages) {
+                assignmentPage.links.nextPage = `/assignments?page=${assignmentPage.page + 1}`;
+                assignmentPage.links.lastPage = `/assignments?page=${assignmentPage.totalPages}`;
+              }
+              if (assignmentPage.page > 1) {
+                assignmentPage.links.prevPage = `/assignments?page=${assignmentPage.page - 1}`;
+                assignmentPage.links.firstPage = '/assignments?page=1';
+              }
+              res.status(200).send(assignmentPage);
 
-          } catch (err) {
-            console.error(err);
-            res.status(500).send({
-              error: "Error inserting assignment into DB.  Please try again later."
+            } catch (err) {
+              console.error(err);
+              res.status(500).send({
+                error: "Error inserting assignment into DB.  Please try again later."
+              });
+            }
+          } else{
+            res.status(400).send({
+              error: "invalid body"
             });
           }
         }
@@ -242,13 +251,15 @@ function saveFile (file, submission) {
 };
 
 router.post('/:id/submissions',
-  //requireAuthentication,
+  requireAuthentication,
 upload.single('file'), async (req, res, next) => {
   //authentication stuffs
   //authenticated
-  //student role
-  //in this course
-
+  
+  response = getStudentAllowedSubmit(req.body)
+  if(req.role=="student"
+  //&& response.length > 0
+  ){
   //if (validateAgainstSchema(req.body, SubmissionSchema)) {
     try {
         const file = {
@@ -269,6 +280,12 @@ upload.single('file'), async (req, res, next) => {
         next(err);
       }
   //}
+}else{
+  res.status(403).send({
+      error: "Unauthorized to access the specified resource"
+    });
+}
+
 
 });
 
