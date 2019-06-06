@@ -177,16 +177,25 @@ router.get('/:id/submissions'
 
 
 
+/*const imageTypes = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png'
+};
 const upload = multer({
   storage: multer.diskStorage({
     destination: `${__dirname}/uploads`,
     filename: (req, file, callback) => {
       const basename = crypto.pseudoRandomBytes(16).toString('hex');
-      const extension = file.mimetype;
+      const extension = imageTypes[file.mimetype];
       callback(null, `${basename}.${extension}`);
     }
-  })
-});
+  }),
+  fileFilter: (req, file, callback) => {
+    callback(null, !!imageTypes[file.mimetype])
+  }
+});*/
+
+const upload = multer({ dest: `${__dirname}/uploads` });
 
 function removeUploadedFile(file) {
   return new Promise((resolve, reject) => {
@@ -244,7 +253,6 @@ upload.single('file'), async (req, res, next) => {
         //await removeUploadedFile(req.file);
 
        res.status(200).send({
-           id: id,
            file: req.file
         });
       } catch (err) {
