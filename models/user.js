@@ -10,11 +10,12 @@ const { extractValidFields } = require('../lib/validation');
 /*
  * Schema describing required/optional fields of a business object.
  */
+
 const UserSchema = {
   name: { required: true },
   email: { required: true },
   password: { required: true },
-  admin: { required: false }
+  role: { required: true }
 };
 
 exports.UserSchema = UserSchema;
@@ -43,7 +44,7 @@ exports.insertNewUser = insertNewUser;
 getUserByEmail = async (email, includePassword) => {
     return new Promise((resolve, reject) => {
         mysqlPool.query(
-            'SELECT' + (includePassword ? ' * ' : ' id, name, email, admin ') + 'FROM users WHERE email = ?',
+            'SELECT' + (includePassword ? ' * ' : ' id, name, email, role ') + 'FROM users WHERE email = ?',
             [ email ],
             (err, results) => {
                 if (err) {
@@ -61,7 +62,7 @@ exports.getUserByEmail = getUserByEmail;
 getUserById = async (id, includePassword) => {
     return new Promise((resolve, reject) => {
         mysqlPool.query(
-            'SELECT' + (includePassword ? ' * ' : ' id, name, email, admin ') + 'FROM users WHERE id = ?',
+            'SELECT' + (includePassword ? ' * ' : ' id, name, email, role ') + 'FROM users WHERE id = ?',
             [ id ],
             (err, results) => {
                 if (err) {

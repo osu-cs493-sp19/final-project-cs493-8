@@ -125,13 +125,13 @@ CREATE TABLE `assignments` (
 LOCK TABLES `assignments` WRITE;
 
 INSERT INTO `assignments` VALUES
-  (1, "Final project CS101", "Write paper.on computer hardware interaction with software.", 1, 100, "2019-06-14T17:00:00-07:00"),
-  (2, "Final project CS160", "Create Python graphic circle.", 2, 100, "2019-06-14T17:00:00-07:00"),
-  (3, "Final project CS161", "Create C++ hello world.", 3, 100, "2019-06-14T17:00:00-07:00"),
-  (4, "Final project CS162", "Create C++ zork game.", 4, 100, "2019-06-14T17:00:00-07:00"),
-  (5, "Final project CS165", "Create C++ zoo program.", 5, 100, "2019-06-14T17:00:00-07:00"),
-  (6, "Final project ECE111", "Soder electrical board.", 6, 100, "2019-06-14T17:00:00-07:00"),
-  (7, "Final project ECE112.", "Create LED stoplight.", 7, 100, "2019-06-14T17:00:00-07:00");
+  (1, "Final project CS101", "Write paper.on computer hardware interaction with software.", 1, 100, "2019-06-14 00:07:00"),
+  (2, "Final project CS160", "Create Python graphic circle.", 2, 100, "2019-06-14 00:07:00"),
+  (3, "Final project CS161", "Create C++ hello world.", 3, 100, "2019-06-14 00:07:00"),
+  (4, "Final project CS162", "Create C++ zork game.", 4, 100, "2019-06-14 00:07:00"),
+  (5, "Final project CS165", "Create C++ zoo program.", 5, 100, "2019-06-14 00:07:00"),
+  (6, "Final project ECE111", "Soder electrical board.", 6, 100, "2019-06-14 00:07:00"),
+  (7, "Final project ECE112.", "Create LED stoplight.", 7, 100, "2019-06-14 00:07:00");
 
 UNLOCK TABLES;
 
