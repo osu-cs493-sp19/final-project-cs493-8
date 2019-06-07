@@ -229,11 +229,11 @@ function saveFile (file, submission) {
 
   return new Promise((resolve, reject) => {
 
-    submission = extractValidFields(submission, AssignmentSchema);
+    //submission = extractValidFields(submission, AssignmentSchema);
     submission.file =  fs.readFileSync(file.path);
     mysqlPool.query(
       'INSERT INTO submissions SET ?',
-      [ file ],
+      [ submission ],
       (err, result) => {
         if (err) {
           reject(err);
@@ -267,8 +267,8 @@ upload.single('file'), async (req, res, next) => {
         };
         console.log("FIRST IMAGE")
         console.log(file);
-        //const id = await saveFile(file, req.body);
-        //await removeUploadedFile(req.file);
+        const id = await saveFile(file, req.body);
+        await removeUploadedFile(req.file);
 
        res.status(200).send({
            file: req.file

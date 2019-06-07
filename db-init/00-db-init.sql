@@ -143,7 +143,7 @@ CREATE TABLE `submissions` (
   `assignmentId` mediumint(9) NOT NULL,
   `studentId` mediumint(9) NOT NULL,
   `timestamp` varchar(255) NOT NULL,
-  `file` BLOB(3000),
+  `file` BLOB(300000),
   PRIMARY KEY (`id`),
   CONSTRAINT `submissions_ibfk_1` FOREIGN KEY (`assignmentId`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
   CONSTRAINT `submissions_ibfk_2` FOREIGN KEY (`studentId`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -174,6 +174,7 @@ CREATE TABLE `enrollments` (
 
 
 LOCK TABLES `enrollments` WRITE;
+
 INSERT INTO `enrollments` VALUES
   (1, 1, 6),
   (2, 1, 7),
