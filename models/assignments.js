@@ -225,15 +225,16 @@ exports.validcourseinstructorById = validcourseinstructorById;
 
 
 
-function getStudentAllowedSubmit() {
+function getStudentAllowedSubmit(studentId, assignmentId) {
   return new Promise((resolve, reject) => {
     mysqlPool.query(
-      'SELECT COUNT(*) AS count FROM assignments',
+      'SELECT * FROM assignments JOIN courses ON assignments.courseId = courses.id JOIN enrollments ON enrollments.courseId = courses.id WHERE enrollments.userId=? AND assignments.id=?',
+      [studentId,assignmentId],
       (err, results) => {
         if (err) {
           reject(err);
         } else {
-          resolve(results[0].count);
+          resolve(results);
         }
       }
     );

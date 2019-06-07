@@ -196,25 +196,22 @@ router.get('/:id/submissions'
 
 
 
-/*const imageTypes = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png'
-};
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: `${__dirname}/uploads`,
     filename: (req, file, callback) => {
       const basename = crypto.pseudoRandomBytes(16).toString('hex');
-      const extension = imageTypes[file.mimetype];
+      const extension = 'pdf';
       callback(null, `${basename}.${extension}`);
     }
   }),
   fileFilter: (req, file, callback) => {
-    callback(null, !!imageTypes[file.mimetype])
+    callback(null, file.mimetype.includes("pdf"))
   }
-});*/
+});
 
-const upload = multer({ dest: `${__dirname}/uploads` });
+//const upload = multer({ dest: `${__dirname}/uploads` });
 
 function removeUploadedFile(file) {
   return new Promise((resolve, reject) => {
@@ -255,10 +252,10 @@ router.post('/:id/submissions',
 upload.single('file'), async (req, res, next) => {
   //authentication stuffs
   //authenticated
-  
-  response = getStudentAllowedSubmit(req.body)
+
+  response = await getStudentAllowedSubmit(req.user, req.params.id)
   if(req.role=="student"
-  //&& response.length > 0
+  && response.length > 0
   ){
   //if (validateAgainstSchema(req.body, SubmissionSchema)) {
     try {
@@ -279,8 +276,8 @@ upload.single('file'), async (req, res, next) => {
       } catch (err) {
         next(err);
       }
-  //}
-}else{
+  }
+else{
   res.status(403).send({
       error: "Unauthorized to access the specified resource"
     });
