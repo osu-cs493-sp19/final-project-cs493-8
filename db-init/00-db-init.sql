@@ -143,7 +143,7 @@ CREATE TABLE `submissions` (
   `assignmentId` mediumint(9) NOT NULL,
   `studentId` mediumint(9) NOT NULL,
   `timestamp` varchar(255) NOT NULL,
-  `file` BLOB(3000),
+  `file` BLOB(300000),
   PRIMARY KEY (`id`),
   CONSTRAINT `submissions_ibfk_1` FOREIGN KEY (`assignmentId`) REFERENCES `assignments` (`id`) ON DELETE CASCADE,
   CONSTRAINT `submissions_ibfk_2` FOREIGN KEY (`studentId`) REFERENCES `users` (`id`) ON DELETE CASCADE
@@ -153,6 +153,31 @@ CREATE TABLE `submissions` (
 LOCK TABLES `submissions` WRITE;
 INSERT INTO `submissions` VALUES
   (1, "desc1", 1,6,"2019-06-14T17:00:00-07:00",NULL),
-  (2, "desc2", 1,6,"2019-06-14T17:00:00-07:00",NULL);
+  (2, "desc2", 1,6,"2019-06-14T17:00:00-07:00",NULL),
+  (3, "desc3", 1,6,"2019-06-14T17:00:00-07:00",NULL);
+
+UNLOCK TABLES;
+
+
+
+
+DROP TABLE IF EXISTS `enrollments`;
+
+CREATE TABLE `enrollments` (
+  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `courseId` mediumint(9) NOT NULL,
+  `userId` mediumint(9) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `enrollments_ibfk_1` FOREIGN KEY (`courseId`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `enrollments_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+LOCK TABLES `enrollments` WRITE;
+
+INSERT INTO `enrollments` VALUES
+  (1, 1, 6),
+  (2, 1, 7),
+  (3, 1, 8);
 
 UNLOCK TABLES;
