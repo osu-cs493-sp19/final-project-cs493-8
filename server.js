@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const { rateLimit } = require('./lib/redis');
 
 const api = require('./api');
 
@@ -20,6 +21,9 @@ app.use(express.static('public'));
  * top-level router lives in api/index.js.  That's what we include here, and
  * it provides all of the routes.
  */
+
+app.use(rateLimit);
+
 app.use('/', api);
 
 app.use('*', function (req, res, next) {
