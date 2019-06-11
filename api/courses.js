@@ -142,7 +142,7 @@ router.get('/:courseid', async (req, res) => {
 /*
  * Route to replace data for a course.
  */
- router.put('/:id', requireAuthentication, async (req, res) => {
+ router.patch('/:id', requireAuthentication, async (req, res) => {
    const courseid = parseInt(req.params.id);
    try {
      const validCourse = await getCourseByID(courseid);
