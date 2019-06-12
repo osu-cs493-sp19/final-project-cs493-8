@@ -8,6 +8,11 @@ const {
   validateUser
 } = require('../models/user');
 
+const {
+  getCoursesByInstructorId,
+  getEnrollmentByStudentId,
+} = require('../models/course');
+
 const { generateAuthToken, requireAuthentication, requireAdmin } = require('../lib/auth');
 
 
@@ -24,6 +29,39 @@ router.get('/test', requireAuthentication, async (req, res, next) => {
   });
 });
 
+
+router.get('/:userId', requireAuthentication, async (req, res, next) => {
+  const userId = req.params.userId;
+  try {
+    if(req.user !== parseInt(userId) && !(req.role == 'admin')){
+      res.status(403).json({
+        error: "Unauthorized to access the specified resource"
+      });
+    }else{
+      const user = (await getUserById(userId, false))[0];
+      console.log(user);
+      console.log(userId);
+      if(user.role == 'instructor'){
+        user.classes = await getCoursesByInstructorId(userId);  
+      } else if(user.role == 'student'){
+        user.classes = await getEnrollmentByStudentId(userId);
+      }
+
+      if(user){
+        res.status(200).send({
+          user: user
+        });
+      }else{
+        next();
+      }
+    }
+  } catch(err){
+    console.log(err);
+    res.status(500).send({
+      error: "Error getting user.  Try again later."
+    });
+  }
+});
 
 router.post('/', requireAdmin, async (req, res, next) => {
   if (validateAgainstSchema(req.body, UserSchema)) {
@@ -81,5 +119,6 @@ router.post('/login', async (req, res, next) => {
     });
   }
 });
+
 
 module.exports = router;

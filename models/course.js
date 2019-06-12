@@ -251,3 +251,42 @@ function getAssignmentsInCourse(id) {
   });
 }
 exports.getAssignmentsInCourse = getAssignmentsInCourse;
+
+function getEnrollmentByStudentId(id) {
+  return new Promise(async (resolve, reject) => {
+    mysqlPool.query(
+      'SELECT courseId FROM enrollments WHERE userId=?',
+      [id],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          //console.log("in course", results);
+          resolve(results);
+        }
+      }
+    );
+  });
+
+}
+
+exports.getEnrollmentByStudentId = getEnrollmentByStudentId;
+
+function getCoursesByInstructorId(id) {
+  return new Promise(async (resolve, reject) => {
+    mysqlPool.query(
+      'SELECT id FROM courses WHERE instructorId=?',
+      [id],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          //console.log("in course", results);
+          resolve(results);
+        }
+      }
+    );
+  });
+}
+
+exports.getCoursesByInstructorId = getCoursesByInstructorId;
